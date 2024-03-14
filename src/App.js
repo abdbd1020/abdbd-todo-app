@@ -1,9 +1,9 @@
-import logo from './logo.svg';
 import './App.css';
-import { NoteTable } from './Note/NoteTable'; // Adjust the import path based on your project structure
-
-
-
+import { NoteTable } from './Note/NoteTable'; 
+import { uid } from 'uid';
+import { NoteForm } from './Note/NoteForm'; 
+import { CButton } from '@coreui/react';
+import React, { useState } from 'react';
 const mockNotes = [
   {
     id: uid(),
@@ -44,7 +44,13 @@ const mockNotes = [
 ]
 
 function App() {
-  const [notes, setNotes] = useState(initialNotes);
+  const [notes, setNotes] = useState(mockNotes);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [newNote, setNewNote] = useState({ title: '', desc: '' });
+
+const addNote = (note) => {
+  setNotes([...notes, note]);
+};
 
   const updateNote = (id) => {
     // TODO
@@ -55,10 +61,24 @@ function App() {
     const updatedNotes = notes.filter(note => note.id !== id);
     setNotes(updatedNotes);
   };
+
+  const handleAddNote = () => {
+    // Logic to add a new note
+    // For example, set a unique id for the note, then add it to the notes array
+    const noteToAdd = { ...newNote, id: Date.now() }; // Simplified example
+    setNotes([...notes, noteToAdd]);
+    setIsModalVisible(false); // Close the modal
+  };
   return (
     <div className="App">
       <NoteTable notes={notes} updateNote={updateNote} deleteNote={deleteNote} />
+      <CButton color="primary" onClick={() => setIsModalVisible(true)}>Add Note</CButton>
 
+    <NoteForm
+        visible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        onSave={addNote}
+      />
     </div>
   );
 }

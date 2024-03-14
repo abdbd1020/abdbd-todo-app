@@ -1,5 +1,5 @@
 import React from "react";
-import { CAlert, CTabs, CTabContent, CTable, CTableBody, CTableDataCell, CTableHead, CTableHeaderCell, CTableRow } from '@coreui/react';
+import { CAlert, CTable, CTableBody, CTableDataCell, CTableHead, CTableHeaderCell, CTableRow, CButton } from '@coreui/react';
 
 export const NoteTable = ({ notes, updateNote, deleteNote }) => {
     if (!notes.length) {
@@ -7,8 +7,8 @@ export const NoteTable = ({ notes, updateNote, deleteNote }) => {
     }
 
     return (
-        <CTable striped>
-            <CTableHead>
+        <CTable striped hover responsive="sm" align="middle" className="shadow-sm">
+            <CTableHead color="dark">
                 <CTableRow>
                     <CTableHeaderCell>Title</CTableHeaderCell>
                     <CTableHeaderCell>Description</CTableHeaderCell>
@@ -29,8 +29,8 @@ export const NoteTable = ({ notes, updateNote, deleteNote }) => {
                         <CTableDataCell>{note.createdAt}</CTableDataCell>
                         <CTableDataCell>{note.updatedAt}</CTableDataCell>
                         <CTableDataCell>
-                            <button onClick={() => updateNote(note.id)}>Update</button>
-                            <button onClick={() => deleteNote(note.id)}>Delete</button>
+                            <CButton color="info" size="sm" onClick={() => updateNote(note.id)}>Update</CButton>
+                            <CButton color="danger" size="sm" onClick={() => deleteNote(note.id)} className="ml-2">Delete</CButton>
                         </CTableDataCell>
                     </CTableRow>
                 ))}
