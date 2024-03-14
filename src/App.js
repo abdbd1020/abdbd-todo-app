@@ -1,14 +1,16 @@
 import './App.css';
-import { NoteTable } from './Note/NoteTable'; 
+import { TodoTable } from './Todo/TodoTable'; 
 import { uid } from 'uid';
-import { NoteForm } from './Note/NoteForm'; 
+import { TodoForm } from './Todo/TodoForm'; 
 import { CButton } from '@coreui/react';
 import React, { useState } from 'react';
-const mockNotes = [
+import { TodoDetails } from './Todo/TodoDetails';
+
+const mockTasks = [
   {
     id: uid(),
-    title: "Note 1",
-    desc: "Note 1 description",
+    name: "task 1",
+    description: "task 1 descriptionription",
     priority: 5,
     status: "Pending",
     createdAt: "2024-03-12T05:19:29.533Z",
@@ -16,8 +18,8 @@ const mockNotes = [
   },
   {
     id: uid(),
-    title: "Note 1",
-    desc: "Note 1 description",
+    name: "task 1",
+    description: "task 1 descriptionription",
     priority: 5,
     status: "Pending",
     createdAt: "2024-03-12T05:19:29.533Z",
@@ -25,8 +27,8 @@ const mockNotes = [
   },
   {
     id: uid(),
-    title: "Note 2",
-    desc: "Note 2 description",
+    name: "task 2",
+    description: "task 2 descriptionription",
     priority: 3,
     status: "Pending",
     createdAt: "2024-03-12T05:19:29.533Z",
@@ -34,50 +36,80 @@ const mockNotes = [
   },
   {
     id: uid(),
-    title: "Note 3",
-    desc: "Note 3 description",
+    name: "task 3",
+    description: "task 3 descriptionription",
     priority: 1,
     status: "Pending",
     createdAt: "2024-03-12T05:19:29.533Z",
     updatedAt: "2024-03-12T05:19:29.533Z",
   },
-]
+];
 
 function App() {
-  const [notes, setNotes] = useState(mockNotes);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [newNote, setNewNote] = useState({ title: '', desc: '' });
+  
+  const [tasks, setTasks] = useState(mockTasks);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [isDetailsModalVisible, setIsDetailsModalVisible] = useState(false);
 
-const addNote = (note) => {
-  setNotes([...notes, note]);
-};
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editingTask, setEditingTask] = useState(null);
 
-  const updateNote = (id) => {
-    // TODO
-    console.log(`Update note with id: ${id}`);
+  const addTask = (task) => {
+    const updatedTasks = tasks.map((n ) => (n.id === task.id ? task : n));
+    setTasks(updatedTasks);
+    setIsEditModalVisible(false);
+  };
+  console.log(tasks)
+
+  const updateTask = (task) => {
+    const updatedTasks =  tasks.reduce((acc, task) => {
+      if (task.id === task.id) {
+        return task
+      }
+    }, {})
+    setIsEditModalVisible(true);
+    setIsEditMode(true);
+    setEditingTask(updatedTasks);
+  };
+  const taskDetails = (task) => {
+
+
+    
+    
+    const currentTask = tasks.reduce((acc, task) => {
+      if (task.id === task.id) {
+        return task
+      }
+    }, {})
+
+    setIsDetailsModalVisible(true);
+    setIsEditMode(false);
+    setEditingTask(currentTask);
   };
 
-  const deleteNote = (id) => {
-    const updatedNotes = notes.filter(note => note.id !== id);
-    setNotes(updatedNotes);
+
+  const deleteTask = (id) => {
+    const updatedTasks = tasks.filter((task) => task.id !== id);
+    setTasks(updatedTasks);
   };
 
-  const handleAddNote = () => {
-    // Logic to add a new note
-    // For example, set a unique id for the note, then add it to the notes array
-    const noteToAdd = { ...newNote, id: Date.now() }; // Simplified example
-    setNotes([...notes, noteToAdd]);
-    setIsModalVisible(false); // Close the modal
-  };
   return (
     <div className="App">
-      <NoteTable notes={notes} updateNote={updateNote} deleteNote={deleteNote} />
-      <CButton color="primary" onClick={() => setIsModalVisible(true)}>Add Note</CButton>
 
-    <NoteForm
-        visible={isModalVisible}
-        onClose={() => setIsModalVisible(false)}
-        onSave={addNote}
+      <TodoTable tasks={tasks} taskDetails={taskDetails} deleteTask={deleteTask} updateTask={updateTask} />
+      <CButton color="primary" onClick={() => { setIsEditModalVisible(true); setIsEditMode(false); }}>Add Task</CButton>
+
+      <TodoForm
+        visible={isEditModalVisible}
+        onClose={() => setIsEditModalVisible(false)}
+        onSave={addTask}
+        isUpdate={isEditMode}
+        taskToUpdate={editingTask}
+      />
+      <TodoDetails
+        visible={isDetailsModalVisible}
+        onClose={() => setIsDetailsModalVisible(false)}
+        currentTask={editingTask}
       />
     </div>
   );
