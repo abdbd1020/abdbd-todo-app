@@ -43,6 +43,8 @@ const mockTasks = [
     createdAt: "2024-03-12T05:19:29.533Z",
     updatedAt: "2024-03-12T05:19:29.533Z",
   },
+  
+  
 ];
 
 function App() {
@@ -59,7 +61,6 @@ function App() {
     setTasks(updatedTasks);
     setIsEditModalVisible(false);
   };
-  console.log(tasks)
 
   const updateTask = (task) => {
     const updatedTasks =  tasks.reduce((acc, task) => {
@@ -96,7 +97,7 @@ function App() {
   return (
     <div className="App">
 
-      <TodoTable tasks={tasks} taskDetails={taskDetails} deleteTask={deleteTask} updateTask={updateTask} />
+      <TodoTable className="TodoTableContainer" tasks={tasks} taskDetails={taskDetails} deleteTask={deleteTask} updateTask={updateTask} />
       <CButton color="primary" onClick={() => { setIsEditModalVisible(true); setIsEditMode(false); }}>Add Task</CButton>
 
       <TodoForm
