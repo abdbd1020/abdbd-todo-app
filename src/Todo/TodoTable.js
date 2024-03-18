@@ -64,7 +64,6 @@ export const TodoTable = ({ tasks, taskDetails, deleteTask, updateTask, handleSe
                                 <option value={ClientEnum.Completed}>Completed</option>
                             </select>
                         </CTableHeaderCell>
-                                                <CTableHeaderCell>Is <br />done</CTableHeaderCell>
 
                         <CTableHeaderCell>All<br />Actions
                         </CTableHeaderCell>
