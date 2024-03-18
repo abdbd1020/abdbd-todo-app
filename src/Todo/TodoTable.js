@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { CAlert, CTable, CTableBody, CTableDataCell, CTableHead, CTableHeaderCell, CTableRow, CButton } from '@coreui/react';
+import { CTable, CTableBody, CTableDataCell, CTableHead, CTableHeaderCell, CTableRow, CButton } from '@coreui/react';
+
 import { ClientEnum } from "../ClientEnum";
+import CIcon from '@coreui/icons-react';
+import {cilFilter, cilMagnifyingGlass } from '@coreui/icons';
 
 export const TodoTable = ({ tasks, taskDetails, deleteTask, updateTask, handleSearch, handleStatusFilter, handlePriorityFilter }) => {
-    const [searchVisible, setSearchVisible] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
 
 
@@ -13,17 +15,35 @@ export const TodoTable = ({ tasks, taskDetails, deleteTask, updateTask, handleSe
             <CTable striped hover responsive="sm" align="middle" className="shadow-sm">
                 <CTableHead color="dark">
                     <CTableRow>
-                        <CTableHeaderCell>Task         {searchVisible ? (
+                    <CTableHeaderCell>
+                    Task
+                    <br />
+                    { (
+                        <div className="SearchContainer">
+                        <CIcon icon={cilMagnifyingGlass} className="text-white" /> {/* White search icon */}
+
                             <input
                                 type="text"
-                                placeholder="Search by name"
+                                placeholder="Search"
                                 value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onChange={(e) => {
+                                    handleSearch(e.target.value)
+                                    setSearchTerm(e.target.value)}}
+                                style={
+                                    {                 
+                                           width : '150px',
+                                           height : '25px'
+                                }
+                                }
                             />
-                        ) : (
-                            <i className="fa fa-search" onClick={() => setSearchVisible(true)}></i>
-                        )}</CTableHeaderCell>
+                        </div>
+                    ) 
+                    }
+                </CTableHeaderCell>
                         <CTableHeaderCell>Priority
+                            <br />
+                            <CIcon icon={cilFilter}  className="text-white" />
+
                             <select onChange={(e) => handlePriorityFilter(e.target.value)}>
                                 <option value={ClientEnum.ALL}>All Priority</option>
                                 <option value="1">1</option>
@@ -34,16 +54,22 @@ export const TodoTable = ({ tasks, taskDetails, deleteTask, updateTask, handleSe
                             </select>
                         </CTableHeaderCell>
                         <CTableHeaderCell>Status
+                            <br />
+                            <CIcon icon={cilFilter}  className="text-white" />
+
                             <select onChange={(e) => handleStatusFilter(e.target.value)}>
-                                <option value={ClientEnum.ALL}>All Status</option>
+                                <option value={ClientEnum.ALL}>ALL Status</option>
                                 <option value={ClientEnum.Pending}>Pending</option>
                                 <option value={ClientEnum.Completed}>Completed</option>
                                 <option value={ClientEnum.Failed}>Deleted</option>
                             </select>
                         </CTableHeaderCell>
-                        <CTableHeaderCell>Details</CTableHeaderCell>
-                        <CTableHeaderCell>Update</CTableHeaderCell>
-                        <CTableHeaderCell>Delete</CTableHeaderCell>
+                        <CTableHeaderCell>Details <br />
+                        </CTableHeaderCell>
+                        <CTableHeaderCell>Update  <br />
+                        </CTableHeaderCell>
+                        <CTableHeaderCell>Delete   <br />
+                        </CTableHeaderCell>
                     </CTableRow>
                 </CTableHead>
                 <CTableBody>
@@ -68,5 +94,6 @@ export const TodoTable = ({ tasks, taskDetails, deleteTask, updateTask, handleSe
         </div>
     );
 };
+
 
 
