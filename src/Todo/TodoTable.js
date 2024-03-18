@@ -7,6 +7,7 @@ export const TodoTable = ({ tasks, taskDetails, deleteTask,updateTask }) => {
     }
 
     return (
+        <div className="TodoTableContainer">
         <CTable striped hover responsive="sm" align="middle" className="shadow-sm">
             <CTableHead color="dark">
                 <CTableRow>
@@ -37,5 +38,7 @@ export const TodoTable = ({ tasks, taskDetails, deleteTask,updateTask }) => {
                 ))}
             </CTableBody>
         </CTable>
+        </div>
     );
 };
+

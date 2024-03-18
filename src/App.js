@@ -2,10 +2,9 @@ import "./App.css";
 import { TodoTable } from "./Todo/TodoTable";
 import { uid } from "uid";
 import { TodoForm } from "./Todo/TodoForm";
-import { CButton } from "@coreui/react";
 import React, { useState } from "react";
 import { TodoDetails } from "./Todo/TodoDetails";
-import { SideBar } from "./SideBar";
+import TopBar from "./TopBar";
 const mockTasks = [
   {
     id: uid(),
@@ -44,7 +43,6 @@ const mockTasks = [
     updatedAt: "2024-03-12T05:19:29.533Z",
   },
 ];
-
 function App() {
   const [tasks, setTasks] = useState(mockTasks);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
@@ -53,6 +51,9 @@ function App() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
   const [isFilter, setIsFilter] = useState(false);
+
+  // Store original tasks separately
+  const [originalTasks, setOriginalTasks] = useState(mockTasks);
 
   const addTask = (task) => {
     const newTasks = tasks.map((n) => (n.id === task.id ? task : n));
@@ -71,8 +72,6 @@ function App() {
 
   const taskDetails = (currentTaskId) => {
     const currentTask = tasks.find((task) => task.id === currentTaskId);
-    console.log("currentTask", currentTask);
-
     setIsDetailsModalVisible(true);
     setIsEditMode(false);
     setEditingTask(currentTask);
@@ -84,41 +83,36 @@ function App() {
   };
 
   const handleSearch = (searchTerm) => {
-    const filteredTasks = tasks.filter((task) =>
+    const filteredTasks = originalTasks.filter((task) =>
       task.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    if (!isFilter) setAllTasks(tasks);
+    console.log(originalTasks)
     setTasks(filteredTasks);
     setIsFilter(true);
   };
 
   const handleStatusFilter = (statusFilter) => {
-    const filteredTasks = tasks.filter((task) =>
+    const filteredTasks = originalTasks.filter((task) =>
       statusFilter === "all" ? task : task.status === statusFilter
     );
-    if (!isFilter) setAllTasks(tasks);
     setTasks(filteredTasks);
     setIsFilter(true);
   };
+
   const handlePriorityFilter = (priorityFilter) => {
-    console.log("priorityFilter", priorityFilter);
-    const filteredTasks = tasks.filter((task) =>
+    const filteredTasks = originalTasks.filter((task) =>
       priorityFilter === "all" ? task : task.priority === priorityFilter
     );
-    if (!isFilter) setAllTasks(tasks);
     setTasks(filteredTasks);
     setIsFilter(true);
   };
 
   return (
     <div className="App">
-      <SideBar
-        onSearch={handleSearch}
-        onStatusFilter={handleStatusFilter}
-        onPriorityFilter={handlePriorityFilter}
-      />
-
-      <div className="TodoTableContainer" style={{ marginLeft: "200px" }}>
+      <div className="TopBar">
+        <TopBar  setIsEditMode = {setIsEditMode} setIsEditModalVisible = {setIsEditModalVisible}></TopBar>
+      </div>
+      <div className="TodoTableContainer" >
         <TodoTable
           className="TodoTableContainer"
           tasks={tasks}
@@ -127,15 +121,7 @@ function App() {
           updateTask={updateTask}
         />
       </div>
-      <CButton
-        color="primary"
-        onClick={() => {
-          setIsEditModalVisible(true);
-          setIsEditMode(false);
-        }}
-      >
-        Add Task
-      </CButton>
+
 
       <TodoForm
         visible={isEditModalVisible}

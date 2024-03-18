@@ -7,6 +7,24 @@
   pointer-events: none;
 }
 
+.TopBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #303746; 
+  color: #000; 
+  padding: 10px; 
+}
+
+.TopBar .appName {
+  flex: 1; /* This will make the text take up remaining space */
+}
+
+.TopBar button {
+  margin-left: auto;
+}
+
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
