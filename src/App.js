@@ -5,6 +5,7 @@ import { TodoForm } from "./Todo/TodoForm";
 import React, { useState } from "react";
 import { TodoDetails } from "./Todo/TodoDetails";
 import TopBar from "./TopBar";
+import { ClientEnum } from "./ClientEnum";
 const mockTasks = [
   {
     id: uid(),
@@ -51,14 +52,17 @@ function App() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
   const [isFilter, setIsFilter] = useState(false);
+  const [currentStatusFilter, setCurrentStatusFilter] = useState(ClientEnum.ALL)
+  const [currentPriorityFilter, setCurrentPriorityFilter] = useState(ClientEnum.ALL)
 
-  // Store original tasks separately
   const [originalTasks, setOriginalTasks] = useState(mockTasks);
 
-  const addTask = (task) => {
+  const addOrUpdateTask = (task) => {
     const newTasks = tasks.map((n) => (n.id === task.id ? task : n));
+    newTasks.priority = Number(newTasks.priority)
     if (!newTasks.includes(task)) newTasks.push(task);
     setTasks(newTasks);
+    setOriginalTasks(newTasks);
     setIsEditModalVisible(false);
   };
 
@@ -92,16 +96,42 @@ function App() {
   };
 
   const handleStatusFilter = (statusFilter) => {
-    const filteredTasks = originalTasks.filter((task) =>
-      statusFilter === "all" ? task : task.status === statusFilter
+    setCurrentStatusFilter(statusFilter)
+    setTasks(originalTasks)
+
+    const filteredTasks = originalTasks.filter((task) => {
+      if(statusFilter === ClientEnum.ALL){
+          if(currentPriorityFilter === ClientEnum.ALL){
+              return task
+          }
+          return task.priority === currentPriorityFilter
+      }
+      if(currentPriorityFilter === ClientEnum.ALL){
+        return task.status === statusFilter
+      }
+      return task.status === statusFilter && task.priority === Number(currentPriorityFilter)
+    }
     );
     setTasks(filteredTasks);
     setIsFilter(true);
   };
 
   const handlePriorityFilter = (priorityFilter) => {
+    setCurrentPriorityFilter(priorityFilter)
+    setTasks(originalTasks)
     const filteredTasks = originalTasks.filter((task) =>
-      priorityFilter === "all" ? task : task.priority === priorityFilter
+    {
+      if(priorityFilter === ClientEnum.ALL){
+        if(currentStatusFilter === ClientEnum.ALL ){
+          return task
+        }
+        return task.status === currentStatusFilter
+      }
+      if(currentStatusFilter === ClientEnum.ALL){
+        return task.priority === Number(priorityFilter)
+      }
+      return task.priority === Number(priorityFilter) && task.status === currentStatusFilter
+    }
     );
     setTasks(filteredTasks);
     setIsFilter(true);
@@ -118,7 +148,10 @@ function App() {
           tasks={tasks}
           taskDetails={taskDetails}
           deleteTask={deleteTask}
-          updateTask={updateTask}
+          updateTask={updateTask} 
+          handleSearch = {handleSearch}
+          handleStatusFilter = {handleStatusFilter}
+          handlePriorityFilter = {handlePriorityFilter}
         />
       </div>
 
@@ -126,7 +159,7 @@ function App() {
       <TodoForm
         visible={isEditModalVisible}
         onClose={() => setIsEditModalVisible(false)}
-        onSave={addTask}
+        onSave={addOrUpdateTask}
         isUpdate={isEditMode}
         taskToUpdate={editingTask}
       />
