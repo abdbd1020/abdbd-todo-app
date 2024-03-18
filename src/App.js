@@ -13,8 +13,8 @@ const mockTasks = [
     description: "task 1 descriptionription",
     priority: 5,
     status: "Pending",
-    createdAt: "2024-03-12T05:19:29.533Z",
-    updatedAt: "2024-03-12T05:19:29.533Z",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
     id: uid(),
@@ -22,8 +22,8 @@ const mockTasks = [
     description: "task 1 descriptionription",
     priority: 5,
     status: "Pending",
-    createdAt: "2024-03-12T05:19:29.533Z",
-    updatedAt: "2024-03-12T05:19:29.533Z",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
     id: uid(),
@@ -31,8 +31,8 @@ const mockTasks = [
     description: "task 2 descriptionription",
     priority: 3,
     status: "Pending",
-    createdAt: "2024-03-12T05:19:29.533Z",
-    updatedAt: "2024-03-12T05:19:29.533Z",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
     id: uid(),
@@ -40,12 +40,17 @@ const mockTasks = [
     description: "task 3 descriptionription",
     priority: 1,
     status: "Pending",
-    createdAt: "2024-03-12T05:19:29.533Z",
-    updatedAt: "2024-03-12T05:19:29.533Z",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
 ];
 function App() {
-  const [tasks, setTasks] = useState(mockTasks);
+  const [originalTasks, setOriginalTasks] = useState(() => {
+    const savedTasks = localStorage.getItem("todo-tasks");
+    return savedTasks ? JSON.parse(savedTasks) : mockTasks;
+  });
+
+  const [tasks, setTasks] = useState(originalTasks)
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isDetailsModalVisible, setIsDetailsModalVisible] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -54,11 +59,14 @@ function App() {
   const [currentPriorityFilter, setCurrentPriorityFilter] = useState(ClientEnum.ALL)
   const [currentSearchTerm, setCurrentSearchTerm] = useState('')
 
-  const [originalTasks, setOriginalTasks] = useState(mockTasks);
 
   useEffect(() => {
     handleAllFilter();
 }, [currentPriorityFilter, currentStatusFilter, currentSearchTerm]);
+useEffect(() => {
+  localStorage.setItem("todo-tasks", JSON.stringify(originalTasks));
+}, [originalTasks]);
+
 
   const addOrUpdateTask = (task) => {
     const newTasks = tasks.map((n) => (n.id === task.id ? task : n));
@@ -85,6 +93,7 @@ function App() {
   };
 
   const deleteTask = (id) => {
+    console.log(id)
     const updatedTasks = tasks.filter((task) => task.id !== id);
     setTasks(updatedTasks);
     setOriginalTasks(updatedTasks)
@@ -96,7 +105,6 @@ function App() {
   };
 
   const handleStatusFilter = (statusFilter) => {
-    console.log("Status Filter: ", statusFilter)
     setCurrentStatusFilter(statusFilter)
     handleAllFilter()
   };
@@ -109,28 +117,19 @@ function App() {
     
     setTasks(originalTasks);
     const filteredTasks = originalTasks.filter((task) => {
-      console.log(currentPriorityFilter, currentStatusFilter, currentSearchTerm)
         if (currentPriorityFilter === ClientEnum.ALL && currentStatusFilter === ClientEnum.ALL) {
-            console.log("Filtering by name only");
             const result = task.name.toLowerCase().includes(currentSearchTerm.toLowerCase());
-            console.log("Task: ", task, "Result: ", result);
             return result;
         }
         if (currentPriorityFilter === ClientEnum.ALL) {
-            console.log("Filtering by name and status");
             const result = task.name.toLowerCase().includes(currentSearchTerm.toLowerCase()) && task.status === currentStatusFilter;
-            console.log("Task: ", task, "Result: ", result);
             return result;
         }
         if (currentStatusFilter === ClientEnum.ALL) {
-            console.log("Filtering by name and priority");
             const result = task.name.toLowerCase().includes(currentSearchTerm.toLowerCase()) && task.priority === Number(currentPriorityFilter);
-            console.log("Task: ", task, "Result: ", result);
             return result;
         }
-        console.log("Filtering by name, priority, and status");
         const result = task.name.toLowerCase().includes(currentSearchTerm.toLowerCase()) && task.priority === Number(currentPriorityFilter) && task.status === currentStatusFilter;
-        console.log("Task: ", task, "Result: ", result);
         return result;
     });
     setTasks(filteredTasks);
@@ -151,6 +150,7 @@ function App() {
           handleSearch = {handleSearch}
           handleStatusFilter = {handleStatusFilter}
           handlePriorityFilter = {handlePriorityFilter}
+          addOrUpdateTask = {addOrUpdateTask}
         />
       </div>
 

@@ -2,11 +2,16 @@ import React, { useState } from "react";
 import { CTable, CTableBody, CTableDataCell, CTableHead, CTableHeaderCell, CTableRow, CButton } from '@coreui/react';
 
 import { ClientEnum } from "../ClientEnum";
-import CIcon from '@coreui/icons-react';
-import { cilFilter, cilMagnifyingGlass } from '@coreui/icons';
 
-export const TodoTable = ({ tasks, taskDetails, deleteTask, updateTask, handleSearch, handleStatusFilter, handlePriorityFilter }) => {
+export const TodoTable = ({ tasks, taskDetails, deleteTask, updateTask, handleSearch, handleStatusFilter, handlePriorityFilter, addOrUpdateTask }) => {
     const [searchTerm, setSearchTerm] = useState("");
+    const [selectedTask, setSelectedTask] = useState(null);
+    const [isActionClicked, setIsActionClicked] = useState(false);
+
+    const handleActionClick = (task) => {
+        setIsActionClicked(true)
+        setSelectedTask(task);
+    };
 
 
 
@@ -15,14 +20,14 @@ export const TodoTable = ({ tasks, taskDetails, deleteTask, updateTask, handleSe
             <CTable striped hover responsive="sm" align="middle" className="shadow-sm">
                 <CTableHead color="dark">
                     <CTableRow>
+                        <CTableHeaderCell>Is <br />done</CTableHeaderCell>
                         <CTableHeaderCell>
                             Task
                             <br />
                             {(
                                 <div className="SearchContainer">
-                                    <CIcon icon={cilMagnifyingGlass} className="text-white" /> {/* White search icon */}
 
-                                    <input
+                                    <input className="todo-table-header-text"
                                         type="text"
                                         placeholder="Search"
                                         value={searchTerm}
@@ -30,12 +35,6 @@ export const TodoTable = ({ tasks, taskDetails, deleteTask, updateTask, handleSe
                                             handleSearch(e.target.value)
                                             setSearchTerm(e.target.value)
                                         }}
-                                        style={
-                                            {
-                                                width: '100px',
-                                                height: '25px'
-                                            }
-                                        }
                                     />
                                 </div>
                             )
@@ -43,15 +42,9 @@ export const TodoTable = ({ tasks, taskDetails, deleteTask, updateTask, handleSe
                         </CTableHeaderCell>
                         <CTableHeaderCell>Priority
                             <br />
-                            <CIcon icon={cilFilter} className="text-white" />
 
-                            <select
-                                style={
-                                    {
-                                        width: '100px',
-                                        height: '25px'
-                                    }
-                                } onChange={(e) => handlePriorityFilter(e.target.value)}>
+                            <select className="todo-table-header-text"
+                                onChange={(e) => handlePriorityFilter(e.target.value)}>
                                 <option value={ClientEnum.ALL}>All Priority</option>
                                 <option value="1">1</option>
                                 <option value="2">2</option>
@@ -62,47 +55,65 @@ export const TodoTable = ({ tasks, taskDetails, deleteTask, updateTask, handleSe
                         </CTableHeaderCell>
                         <CTableHeaderCell>Status
                             <br />
-                            <CIcon icon={cilFilter} className="text-white" />
 
-                            <select
-                                style={
-                                    {
-                                        width: '100px',
-                                        height: '25px'
-                                    }
-                                }
+                            <select className="todo-table-header-text"
+
                                 onChange={(e) => handleStatusFilter(e.target.value)}>
-                                <option value={ClientEnum.ALL}>ALL Status</option>
+                                <option value={ClientEnum.ALL}>All Status</option>
                                 <option value={ClientEnum.Pending}>Pending</option>
                                 <option value={ClientEnum.Completed}>Completed</option>
-                                <option value={ClientEnum.Failed}>Deleted</option>
                             </select>
                         </CTableHeaderCell>
-                        <CTableHeaderCell><br/>Details 
+                                                <CTableHeaderCell>Is <br />done</CTableHeaderCell>
+
+                        <CTableHeaderCell>All<br />Actions
                         </CTableHeaderCell>
-                        <CTableHeaderCell>Update  <br />
-                        </CTableHeaderCell>
-                        <CTableHeaderCell>Delete   <br />
-                        </CTableHeaderCell>
+
                     </CTableRow>
                 </CTableHead>
                 <CTableBody>
                     {tasks.map((task) => (
                         <CTableRow key={task.id}>
-                            <CTableDataCell>{task.name}</CTableDataCell>
+                            <CTableDataCell>
+                                <input
+                                    type="checkbox"
+                                    checked={task.status === ClientEnum.Completed}
+                                    onChange={() => {
+                                        const updatedTask = { ...task, status: task.status === ClientEnum.Completed ? ClientEnum.Pending : ClientEnum.Completed };
+                                        addOrUpdateTask(updatedTask);
+                                    }}
+                                />
+                            </CTableDataCell>
+                            <CTableDataCell style={{ textDecoration: task.status === ClientEnum.Completed ? 'line-through' : 'none' }}>
+                                {task.name}
+                            </CTableDataCell>                            
                             <CTableDataCell>{task.priority}</CTableDataCell>
                             <CTableDataCell>{task.status}</CTableDataCell>
                             <CTableDataCell>
-                                <CButton color="info" size="sm" onClick={() => taskDetails(task.id)}>Details</CButton>
-                            </CTableDataCell>
-                            <CTableDataCell>
-                                <CButton color="success" size="sm" onClick={() => updateTask(task.id)} className="ml-2">Update</CButton>
-                            </CTableDataCell>
-                            <CTableDataCell>
-                                <CButton color="danger" size="sm" onClick={() => deleteTask(task.id)} className="ml-2">Delete</CButton>
+                            {!isActionClicked || selectedTask.id !== task.id ? (
+                                <CButton color="primary" size="sm" onClick={() => handleActionClick(task)}>Action</CButton>
+                            ) : (
+                                <>
+                                    <CButton color="info" size="sm" onClick={() => {
+                                        setIsActionClicked(false);
+                                        taskDetails(selectedTask);
+                                    }}>Details</CButton>
+                                    <CButton color="success" size="sm" onClick={() => {
+                                        setIsActionClicked(false);
+                                        updateTask(selectedTask);
+                                    }}>Update</CButton>
+                                    <CButton color="danger" size="sm" onClick={() => {
+                                        setIsActionClicked(false);
+                                        deleteTask(selectedTask.id);
+                                    }}>Delete</CButton>
+                                </>
+                            )}
                             </CTableDataCell>
                         </CTableRow>
                     ))}
+
+
+
                 </CTableBody>
             </CTable>
         </div>
