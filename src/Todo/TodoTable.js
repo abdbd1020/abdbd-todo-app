@@ -3,7 +3,7 @@ import { CTable, CTableBody, CTableDataCell, CTableHead, CTableHeaderCell, CTabl
 
 import { ClientEnum } from "../ClientEnum";
 import CIcon from '@coreui/icons-react';
-import {cilFilter, cilMagnifyingGlass } from '@coreui/icons';
+import { cilFilter, cilMagnifyingGlass } from '@coreui/icons';
 
 export const TodoTable = ({ tasks, taskDetails, deleteTask, updateTask, handleSearch, handleStatusFilter, handlePriorityFilter }) => {
     const [searchTerm, setSearchTerm] = useState("");
@@ -15,36 +15,43 @@ export const TodoTable = ({ tasks, taskDetails, deleteTask, updateTask, handleSe
             <CTable striped hover responsive="sm" align="middle" className="shadow-sm">
                 <CTableHead color="dark">
                     <CTableRow>
-                    <CTableHeaderCell>
-                    Task
-                    <br />
-                    { (
-                        <div className="SearchContainer">
-                        <CIcon icon={cilMagnifyingGlass} className="text-white" /> {/* White search icon */}
+                        <CTableHeaderCell>
+                            Task
+                            <br />
+                            {(
+                                <div className="SearchContainer">
+                                    <CIcon icon={cilMagnifyingGlass} className="text-white" /> {/* White search icon */}
 
-                            <input
-                                type="text"
-                                placeholder="Search"
-                                value={searchTerm}
-                                onChange={(e) => {
-                                    handleSearch(e.target.value)
-                                    setSearchTerm(e.target.value)}}
-                                style={
-                                    {                 
-                                           width : '150px',
-                                           height : '25px'
-                                }
-                                }
-                            />
-                        </div>
-                    ) 
-                    }
-                </CTableHeaderCell>
+                                    <input
+                                        type="text"
+                                        placeholder="Search"
+                                        value={searchTerm}
+                                        onChange={(e) => {
+                                            handleSearch(e.target.value)
+                                            setSearchTerm(e.target.value)
+                                        }}
+                                        style={
+                                            {
+                                                width: '100px',
+                                                height: '25px'
+                                            }
+                                        }
+                                    />
+                                </div>
+                            )
+                            }
+                        </CTableHeaderCell>
                         <CTableHeaderCell>Priority
                             <br />
-                            <CIcon icon={cilFilter}  className="text-white" />
+                            <CIcon icon={cilFilter} className="text-white" />
 
-                            <select onChange={(e) => handlePriorityFilter(e.target.value)}>
+                            <select
+                                style={
+                                    {
+                                        width: '100px',
+                                        height: '25px'
+                                    }
+                                } onChange={(e) => handlePriorityFilter(e.target.value)}>
                                 <option value={ClientEnum.ALL}>All Priority</option>
                                 <option value="1">1</option>
                                 <option value="2">2</option>
@@ -55,16 +62,23 @@ export const TodoTable = ({ tasks, taskDetails, deleteTask, updateTask, handleSe
                         </CTableHeaderCell>
                         <CTableHeaderCell>Status
                             <br />
-                            <CIcon icon={cilFilter}  className="text-white" />
+                            <CIcon icon={cilFilter} className="text-white" />
 
-                            <select onChange={(e) => handleStatusFilter(e.target.value)}>
+                            <select
+                                style={
+                                    {
+                                        width: '100px',
+                                        height: '25px'
+                                    }
+                                }
+                                onChange={(e) => handleStatusFilter(e.target.value)}>
                                 <option value={ClientEnum.ALL}>ALL Status</option>
                                 <option value={ClientEnum.Pending}>Pending</option>
                                 <option value={ClientEnum.Completed}>Completed</option>
                                 <option value={ClientEnum.Failed}>Deleted</option>
                             </select>
                         </CTableHeaderCell>
-                        <CTableHeaderCell>Details <br />
+                        <CTableHeaderCell><br/>Details 
                         </CTableHeaderCell>
                         <CTableHeaderCell>Update  <br />
                         </CTableHeaderCell>
